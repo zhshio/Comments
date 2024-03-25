@@ -101,6 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setPhone(phone);
         // 随机用户名
         user.setNickName(USER_NICK_NAME_PREFIX + RandomUtil.randomString(10));
+        save(user);
         return user;
     }
 }
