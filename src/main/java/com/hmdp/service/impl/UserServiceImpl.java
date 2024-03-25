@@ -12,6 +12,7 @@ import com.hmdp.entity.User;
 import com.hmdp.mapper.UserMapper;
 import com.hmdp.service.IUserService;
 import com.hmdp.utils.RegexUtils;
+import com.hmdp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -94,6 +95,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         stringRedisTemplate.expire(LOGIN_USER_KEY + token, LOGIN_USER_TTL, TimeUnit.MINUTES);
         // 返回token
         return Result.ok(token);
+    }
+
+    @Override
+    public Result logout(String token) {
+        // 删除ThreadLocal里存放的用户数据
+        UserHolder.removeUser();
+        // 删除Redis中的登录凭证
+        stringRedisTemplate.delete(LOGIN_USER_KEY + token);
+        return Result.ok("退出成功");
     }
 
     private User createUserWithPhone(String phone) {
